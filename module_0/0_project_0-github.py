@@ -1,36 +1,52 @@
+#
+# Компьютер загадывает число от 1 до 100. 
+# За основу взят медом деления отрезка попалам. 
+# Зная длину отрезка, устанавливаем его середину. 
+# Затем каждую итерацию уменьшаем устанавливаемое число в два раза. 
+# Наш отрезок = 100. Полученные числа = 50, 25, 12, 6, 3, 1. 
+# Основываясь на подсказке - "число больше" или "число меньше" загаданного, 
+# каждую итерацию мы уменьшаем или увеличиваем искомое число
+# на полученное число в порядке убывания. 
+# В результате мы получаем максимум 7 итераций.
+# 
+
 import numpy as np
 
-def game_core_v2(number):
-    '''Сначала устанавливаем любое random число, а потом уменьшаем или увеличиваем его в зависимости от того, больше оно или меньше нужного.
-       Функция принимает загаданное число и возвращает число попыток'''
-    a = 1
-    b = 100
-    predict = np.random.randint(a,b)
-    #print("Загадано число от 1 до 100")
-    #print("Это число",predict)
+def game_core(number):
+    """Функция принимает загаданное число и возвращает число попыток."""
+    
+    min = 1
+    max = 100
+    predict = np.random.randint(min,max) # компьютер загадал число
     count = 1
-    number = b // 2
+    number = max//2
     while number != predict:
-        count = count + 1
+        count += 1
         if number > predict:
-            b = number
-        elif number < predict: 
-            a = number
-        number = (b - a) // 2 + a
-        
+            max = number
+        elif number < predict:
+            min = number
+        number = (max-min)//2 + min # применяем формулу метода
+
     return count # выход из цикла, если угадали
 
-#game_core_v2(number)
-def score_game(game_core_v2):
-    '''Запускаем игру 1000 раз, чтобы узнать, как быстро игра угадывает число'''
-    count_ls = []
-    np.random.seed(1)  # фиксируем RANDOM SEED, чтобы ваш эксперимент был воспроизводим!
-    random_array = np.random.randint(a,b, size=(1000))
-    for number in random_array:
-        count_ls.append(game_core_v2(number))
-        score = int(np.mean(count_ls))
-    print(f"Ваш алгоритм угадывает число в среднем за {score} попыток")
+def score_game(game_core):
+    """Запускаем игру 1000 раз,
+    чтобы узнать среднее количество раз,     
+    необходимое игре для нахождения загаданного числа.
     
+    """
+
+    min = 1
+    max = 100
+    count_list = []
+    np.random.seed(1)  # фиксируем SEED для воспроизведения эксперимента
+    random_array = np.random.randint(min,max, size=(1000))
+    for number in random_array:
+        count_list.append(game_core(number))
+        score = int(np.mean(count_list)) # подсчет среднего значения попыток
+    print(f"Ваш алгоритм угадывает число в среднем за {score} попыток")
+
     return score
 
-score_game(game_core_v2)
+score_game(game_core)
